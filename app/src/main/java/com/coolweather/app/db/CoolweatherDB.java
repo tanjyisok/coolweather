@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.coolweather.app.model.City;
-import com.coolweather.app.model.Country;
+import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class CoolweatherDB {
         return list;
     }
 
-    public void saveCity(City city){
+    public void saveCities(City city){
         if(city != null){
             ContentValues values = new ContentValues();
             values.put("city_name",city.getCityName());
@@ -70,7 +70,7 @@ public class CoolweatherDB {
         }
     }
 
-    public List<City> loadCity(int provinceID){
+    public List<City> loadCities(int provinceID){
         List<City> list = new ArrayList<City>();
         Cursor cursor = db.query("City",null,"province_id=?",new String[]{String.valueOf(provinceID)},null,null,null);
         if(cursor.moveToFirst()){
@@ -86,27 +86,27 @@ public class CoolweatherDB {
         return list;
     }
 
-    public void saveCountry(Country country){
-        if(country != null){
+    public void saveCounties(County county){
+        if(county != null){
             ContentValues values = new ContentValues();
-            values.put("country_name",country.getCountryName());
-            values.put("country_code",country.getCountryCode());
-            values.put("city_id",country.getCityID());
-            db.insert("Country",null,values);
+            values.put("county_name",county.getCountyName());
+            values.put("county_code",county.getCountyCode());
+            values.put("city_id",county.getCityID());
+            db.insert("County",null,values);
         }
     }
 
-    public List<Country> loadCountry(int cityID){
-        List<Country> list = new ArrayList<Country>();
-        Cursor cursor = db.query("Country",null,"city_id=?",new String[]{String.valueOf(cityID)},null,null,null);
+    public List<County> loadCounties(int cityID){
+        List<County> list = new ArrayList<County>();
+        Cursor cursor = db.query("County",null,"city_id=?",new String[]{String.valueOf(cityID)},null,null,null);
         if(cursor.moveToFirst()){
             do{
-                Country country = new Country();
-                country.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                country.setCountryName(cursor.getString(cursor.getColumnIndex("country_name")));
-                country.setCountryCode(cursor.getString(cursor.getColumnIndex("country_code")));
-                country.setCityId(cityID);;
-                list.add(country);
+                County County = new County();
+                County.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                County.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
+                County.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
+                County.setCityId(cityID);;
+                list.add(County);
             }while (cursor.moveToNext());
         }
         return list;
