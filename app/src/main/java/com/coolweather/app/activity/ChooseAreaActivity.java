@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.coolweather.app.R;
 import com.coolweather.app.db.CoolweatherDB;
+import com.coolweather.app.db.QueryWeatherCode;
 import com.coolweather.app.model.City;
 import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
@@ -79,9 +80,11 @@ public class ChooseAreaActivity extends AppCompatActivity {
                     selectedCity = cityList.get(position);
                     queryCounties();
                 }else if (currentLevel == LEVEL_COUNTY){
-                    String countyCode = countyList.get(position).getCountyCode();
+                    String countyName = countyList.get(position).getCountyName();
+                    QueryWeatherCode queryWeatherCode = new QueryWeatherCode(coolweatherDB);
+                    String weatherCode = queryWeatherCode.queryCode(coolweatherDB,countyName);
                     Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
-                    intent.putExtra("county_code",countyCode);
+                    intent.putExtra("weather_code",weatherCode);
                     startActivity(intent);
                     finish();
                 }
@@ -137,6 +140,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
             queryFromServer(selectedCity.getCityCode(),"county");
         }
     }
+
 
     private void queryFromServer(final String code,final String type){
         String address;

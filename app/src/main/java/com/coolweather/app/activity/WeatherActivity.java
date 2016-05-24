@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.coolweather.app.R;
+import com.coolweather.app.db.CoolweatherDB;
 import com.coolweather.app.util.HttpUtil;
 import com.coolweather.app.util.Utility;
 
@@ -45,11 +46,11 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
         currentDateText = (TextView)findViewById(R.id.current_date);
         switchCity = (Button)findViewById(R.id.swich_city);
         refreshWeather = (Button)findViewById(R.id.refresh_weather);
-        String countyCode = getIntent().getStringExtra("county_code");
-        if (!TextUtils.isEmpty(countyCode)){
+        String weatherCode = getIntent().getStringExtra("weather_code");
+        if (!TextUtils.isEmpty(weatherCode)){
             publishText.setText("同步中...");
             weatherInfoLayout.setVisibility(View.INVISIBLE);
-            queryWeatherCode(countyCode);
+            queryWeatherInfo(weatherCode);
         }else {
             showWeather();
         }
@@ -79,37 +80,28 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void queryWeatherCode(String countyCode){
-        String address = "http://www.weather.com.cn/data/list3/city" + countyCode +".xml";
-        queryFromServer(address,"countycode");
-    }
+//    private void queryWeatherCode(String countyCode){
+//        String address = "http://www.weather.com.cn/data/list3/city" + countyCode +".xml";
+//        queryFromServer(address,"countycode");
+//    }
 
     private void queryWeatherInfo(String weatherCode){
         String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
-        queryFromServer(address,"weatherCode");
+        queryFromServer(address);
     }
 
-    private void queryFromServer(final String address,final String type) {
+    private void queryFromServer(final String address) {
         HttpUtil.sendHttpRequest(address, new HttpUtil.HttpCallbackListener() {
             @Override
             public void onFinish(final String response) {
-                if ("countyCode".equals(type)){
-                    if (!TextUtils.isEmpty(response)){
-                        String[] array = response.split("\\|");
-                        if (array != null && array.length == 2){
-                            String weatherCode = array[1];
-                            queryWeatherInfo(weatherCode);
-                        }
-                    }
-                }else if ("weatherCode".equals(type)){
-                    Utility.handleWeatherResponse(WeatherActivity.this,response);
-                    runOnUiThread(new Runnable() {
+                Utility.handleWeatherResponse(WeatherActivity.this,response);
+                runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             showWeather();
                         }
-                    });
-                }
+                });
+
             }
 
             @Override

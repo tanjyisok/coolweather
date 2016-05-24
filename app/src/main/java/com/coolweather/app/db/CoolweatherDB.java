@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.coolweather.app.model.City;
 import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
+import com.coolweather.app.model.WeatherCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 public class CoolweatherDB {
     public static final String DB_NAME = "cool_weather";
 
-    public static final int VERSION = 1;
+    public static final int VERSION = 4;
 
     private static CoolweatherDB coolweatherDB;
 
@@ -110,5 +111,30 @@ public class CoolweatherDB {
             }while (cursor.moveToNext());
         }
         return list;
+    }
+
+    public void saveWeatherCode(WeatherCode weatherCode){
+        if (weatherCode != null){
+            ContentValues values = new ContentValues();
+            values.put("weather_code",weatherCode.getWeatherCode());
+            values.put("weather_code_city",weatherCode.getWeatherCodeCity());
+            db.insert("WeatherCode",null,values);
+        }
+    }
+
+    public String loadWeatherCode(String weatherCodeCity){
+        List<WeatherCode> list = new ArrayList<WeatherCode>();
+        String a;
+        Cursor cursor = db.query("WeatherCode",null,"weather_code_city=?",new String[]{weatherCodeCity},null,null,null);
+        if (cursor.moveToFirst()){
+            do {
+                WeatherCode weatherCode = new WeatherCode();
+                weatherCode.setWeatherCode(cursor.getString(cursor.getColumnIndex("weather_code")));
+                weatherCode.setWeatherCodeCity(weatherCodeCity);
+                list.add(weatherCode);
+            }while (cursor.moveToNext());
+        }
+        a = list.get(0).getWeatherCode();
+        return a;
     }
 }
